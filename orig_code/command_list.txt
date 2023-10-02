@@ -1,0 +1,79 @@
+databases:
+
+          CREATE TABLE `devices`
+                                (
+                                   `id` int NOT NULL AUTO_INCREMENT,
+                                   `imei` varchar(50) NOT NULL,
+                                   `canal1` varchar(5) NOT NULL DEFAULT '1',           <<-- value read on channel 1 -- 1 leu
+                                   `canal2` varchar(5) NOT NULL DEFAULT '5',           <<-- value read on channel 2 -- 5 leu
+                                   `canal3` varchar(5) NOT NULL DEFAULT '10',          <<-- value read on channel 3 -- 10 leu
+                                   `canal4` varchar(5) NOT NULL DEFAULT '50',          <<-- value read on channel 4 -- 50 leu
+                                   `probe` varchar(1) NOT NULL DEFAULT '0',
+                                   `obs` text NOT NULL,
+                               PRIMARY KEY (`id`)
+                                 )
+
+
+==============================================================
+
+
+    $_GET['e'] = 1
+    $_GET['imei']
+    $_GET['p']     == page number
+
+
+----------------------------------------------
+
+list all events and status
+
+    $_GET['e'] = 2
+    $_SESSION['perm'] = -1      <- permission == admin
+    $_GET['id']
+
+
+----------------------------------------------
+
+reset password (res_pass)  &   delete user (dlt_acc):
+
+    $_GET['e'] = 3
+    $_SESSION['perm'] = -1      <- permission == admin
+
+    $_POST['da']
+    $_POST['user']
+    $_POST['new_pass']
+    $_POST['conf_new_pass']
+
+----------------------------------------------
+add users:
+
+
+    $_GET['e'] = 4
+    $_SESSION['perm'] = -1      <- permission == admin
+
+    $_POST['da']
+    $_POST['user']
+    $_POST['new_pass']
+    $_POST['conf_new_pass']
+
+    192.168.0.105?e=4
+
+
+add acc
+    192.168.0.105?e=41
+
+
+
+----------------------------------------------
+
+    $_GET['e'] = 5
+    $_SESSION['perm'] = -1      <- permission == admin
+
+    $_GET['imei']
+
+
+    $_POST['da']
+
+    $_POST['town']
+    $_POST['place']
+    $_POST['details']
+    $_POST['simnum']

@@ -1,0 +1,141 @@
+1. install apache
+
+           https://www.digitalocean.com/community/tutorials/how-to-install-the-apache-web-server-on-ubuntu-20-04
+
+
+2. install mysql
+
+           https://www.digitalocean.com/community/tutorials/how-to-install-mysql-on-ubuntu-20-04
+
+
+           user: kosty
+           password: 12345678
+
+
+            enter with: mysql -u kosty -p
+
+
+3. install PHP for apache: https://www.cloudbooklet.com/how-to-install-php-fpm-with-apache-on-ubuntu-20-04/
+
+           sudo apt update
+           sudo apt upgrade
+
+           sudo apt install software-properties-common
+           sudo add-apt-repository ppa:ondrej/php
+           sudo apt update
+           sudo apt upgrade
+
+           sudo apt install php8.1-fpm php8.1-common php8.1-mysql php8.1-xml php8.1-xmlrpc php8.1-curl php8.1-gd php8.1-imagick php8.1-cli php8.1-dev php8.1-imap php8.1-mbstring php8.1-soap php8.1-zip php8.1-bcmath -y
+
+
+           sudo a2dissite 000-default
+
+
+
+4. mysql .... restore database
+
+    mysql -u kosty -p gsm_dbc < /var/www/automat/gsm.sql
+
+    (in mysql 5.7 - you must create first the database
+            create database gsm;
+
+            and afterwords the import works
+    )
+
+
+    is re-crating the database from the gsm.sql dump ... see tutorial from >> https://www.sqlshack.com/how-to-backup-and-restore-mysql-databases-using-the-mysqldump-command/
+
+
+        checking:
+            use gsm;
+            show tables;
+            select * from users;
+
+
+            MD5 password '12345678' hash is: 25d55ad283aa400af464c76d713c07ad
+
+            add-it to the user table password admin:
+
+            update users set pass='25d55ad283aa400af464c76d713c07ad' where user='admin';
+
+            insert into users (id,user,pass,perm) values ('5','admin_CoPa','25d55ad283aa400af464c76d713c07ad','1');
+
+
+
+            --> count numbers of entry inside "log" table using "ID" field:    select count(ID) from log;
+
+            --> delete a total number of 170000 records from table "log":      delete from log limit 170000;
+
+
+
+
+        Testing together with PHP:
+
+                    https://www.siteground.com/tutorials/php-mysql/display-table-data/
+
+
+5. Add this statement to see all errors of PHP code:
+
+
+    ini_set('display_errors', 1); ini_set('display_startup_errors', 1); error_reporting(E_ALL);
+
+
+
+6. Install several PHP versions --- select one for the server !!!!
+
+           see > https://tecadmin.net/install-php-ubuntu-20-04/
+
+
+           https://stackoverflow.com/questions/58045685/uninstall-php-7-in-ubuntu-18-04     -------------
+
+------------------------------------------
+
+
+SELECT log.*, devices.probe FROM log INNER JOIN devices ON log.imei = devices.imei WHERE log.id in ( SELECT max(log.id) FROM log group by imei) AND devices.probe='0' ORDER BY log.id DESC
+
+
+select id,imei,cmd,date from pending_update where imei='862462030142276';
+select id,imei,cmd,pend,date from pending_update where imei='862462030142276';
+
+
+-----------------------------------------
+
+
+<VirtualHost *:80>
+        ServerName php56.example.com
+        DocumentRoot /var/www/automat_php5_6
+        <Directory /var/www/automat_php5_6>
+                Options -Indexes +FollowSymLinks +MultiViews
+                AllowOverride All
+                Require all granted
+        </Directory>
+        <FilesMatch \.php$>
+                SetHandler "proxy:unix:/var/run/php/php5.6-fpm.sock|fcgi://local>
+        <FilesMatch>
+</VirtualHost>
+
+
+
+
+connection:
+        http://192.168.0.109/index.php?user=admin&pass=12345678
+
+
+
+
+--------------------------------------------------------------------------------
+see pending commands:
+
+    select * from pending_update where imei=862462030142276;
+
+
+
+--------------------------------------------------------------------------------
+
+
+Real IP server:
+
+       http://145.239.84.165:35269/gsm/index.php
+
+
+       http://145.239.84.165:35269/gsm/entry_new.php?x=864202468012345;1111111111111111111;0726734731;RDS;0;0;0;0;P;0;0;NO_APP_VER;BUC_TEST;BUC_TEST;TEST;NV9;1

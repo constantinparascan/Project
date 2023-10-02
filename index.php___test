@@ -1,0 +1,229 @@
+<?php
+
+// http://192.168.0.109/index.php?e=aparate
+// http://192.168.0.109/index.php?user=admin&pass=12345678
+
+require_once 'appcon.php'; 
+require_once 'funcs.php'; 
+require_once 'medoo.php'; 
+require_once 'db.php'; 
+
+
+echo '<!DOCTYPE html>'; 
+echo '<html>'; 
+echo '<head>'; 
+
+echo '<h> TEST 0 </h>';
+
+$users = $database->select( "users", "*", "user" ); 
+print_r($users);
+
+echo '<h> TEST 0 - 0 </h>';
+
+//phpinfo(); //<<<< show PHP version
+
+/*
+$username = "kosty";
+$password = "12345678";
+$database = "gsm";
+
+$mysqli = new mysqli("localhost", $username, $password, $database);
+
+$query = $mysqli->query("SELECT * FROM users");
+
+echo '<h> TEST 1 </h>';
+$query = "SELECT * FROM users";
+
+if ($result = $mysqli->query($query)) 
+{
+
+    // fetch associative array 
+    while ($row = $result->fetch_assoc()) 
+    {
+        $field1name = $row["id"];
+        $field2name = $row["user"];
+        $field3name = $row["pass"];
+        
+        echo '<h>'.$field1name.'  '.$field2name.'<\h>';
+    }
+
+
+
+    // free result set 
+    $result->free();
+}
+*/
+
+{ $login_failed = false; 
+
+    if(getGetVar('op') == 'logout') 
+    {   
+            session_unset(); 
+            session_destroy(); 
+            header('Location: index.php'); 
+    }
+
+    echo '<p> TEST 1 </p>';
+
+    if (!isset($_SESSION['user'])) 
+    { 
+        $user = getPostVar('user'); 
+        $pass = getPostVar('pass'); 
+
+        //$user = $_POST['user'];
+        //$pass = $_POST['pass'];
+
+        echo '<p> TEST 2 </p>';
+
+        //$user = 'admin';
+        //$pass = '12345678';
+
+        print_r($_SESSION);
+        echo $pass;
+        echo $user;
+
+
+
+        printf("<p><b>%s:</b></p>", $user);
+
+        //exit();
+
+        if($user != '' || $pass != '') 
+        { 
+
+        echo '<p> TEST 3 </p>';
+
+
+            // !!!! ---- problems with PHP !!!
+            //
+            $users = $database->select( "users", "*", array( "AND" => array( "user" => $user, "pass" => md5($pass) ) ) ); 
+
+
+                echo '<p> TEST 3 --- final </p>';
+                print_r($users);
+                //echo count($users);
+                
+
+            if(count($users) == 1) 
+            { 
+
+
+
+                //$_SESSION["user"] = $user;
+                //$_SESSION["user"] = 'admin';
+                //$_SESSION["perm"] = $users[0]["perm"]; 
+                //$_SESSION["perm"] = 0; 
+                //$_SESSION["uid"] = $users[0]["id"]; 
+                //$_SESSION["uid"] = 1; 
+
+                header('Location: index.php'); 
+
+                echo '<p> TEST 3 --- final 2 </p>';
+
+                exit();
+
+
+            } 
+            else 
+            { 
+                $login_failed = true; 
+                session_unset(); 
+                session_destroy(); 
+            } 
+        } 
+    } 
+} 
+
+$mobile = false; 
+if (IsMobile()) 
+    $mobile = true; 
+
+//echo '<!DOCTYPE html>'; 
+//echo '<html>'; 
+//echo '<head>'; 
+echo '<meta charset="utf-8">'; 
+echo '<link rel="stylesheet" type="text/css" media="all"  href="style.css" />'; 
+echo '<script src="scripts.js"></script>'; 
+echo '<title>'.$app['client_name'].'</title>'; 
+echo '<meta name="description" content="Professional Frontend framework that makes building websites easier than ever.">'; 
+echo '<meta name="viewport" content="width=device-width, initial-scale=1">'; 
+echo '<meta http-equiv="cache-control" content="max-age=0" />'; 
+echo '<link rel="shortcut icon" type="image/x-icon" href="images/site.ico"/>'; 
+echo '</head>'; 
+echo '<body>'; 
+
+
+
+if (!isset($_SESSION['user'])) 
+{ 
+    echo '<div class="site-header">'; 
+    echo '<center>'; 
+    echo '<div class="cell">'; 
+    echo '<h1>'.$app['client_name'].'</h1>'; 
+    echo '</div>'; 
+    echo '</center>'; 
+    echo '<center>'; 
+    echo '<div class="cell">'; 
+    echo '<h3>'; 
+
+    if($login_failed) 
+        echo "<h2>Eroare (".getUserIP().")</h2>"; 
+    else 
+        echo "<h2>Va rugam sa va autentificati.</h2>"; 
+
+    echo '</h3>'; 
+    echo '</div>'; 
+    echo '</center>'; 
+    echo '</div>'; 
+    echo '<center>'; 
+    echo '<form action="index.php?e=aparate" method="post" accept-charset="windows-1252">'; 
+    echo 'User<br>'; 
+    echo '<input name="user" class="input-lg" type="text" placeholder="User" /><br>'; 
+    echo 'Parola<br>'; 
+    echo '<input name="pass" type="password" class="input-lg" placeholder="Parola" /><br>'; 
+    echo '<button type="submit" class="btn_alt">Autentifica</button>'; 
+    echo '</form>'; 
+    echo '</center>'; 
+
+
+    echo '<p> TEST 4 </p>';
+
+} 
+else 
+{ 
+    { 
+
+        echo '<p> TEST 5 </p>';
+
+
+        echo '<header>'; 
+        echo '<div class="inner">'; 
+        echo '<nav>'; 
+        echo '<a href="index.php" class="logo">'.$app['client_name'].'</a>'; 
+        echo '<input type="checkbox" id="nav" class="hide" /><label for="nav"></label>'; 
+        echo '<ul>'; 
+        echo '<li><a href="index.php">Aparate</a></li>'; 
+
+        if(isset($_SESSION["perm"]) && $_SESSION["perm"] <= "0") 
+        { 
+            echo '<li><a href="index.php?e=3">'.Adauga_Diacritice("Configur\a_uri useri").'</a></li>'; 
+
+            if(isset($_GET['e']) && ($_GET['e'] == "1" || $_GET['e'] == "2") ) 
+                echo '<li><a href="index.php?e=5&imei='.$_GET["imei"].'">'.Adauga_Diacritice("Configureaz\a_u aparat").'</a></li>'; 
+
+        } 
+
+        echo '<li><a href="index.php?op=logout" >'.Adauga_Diacritice("Ie\sire").'('.$_SESSION['user'].')</a></li>'; 
+        echo '</ul>'; 
+        echo '</nav>'; 
+        echo '</div>'; 
+        echo '</header>'; 
+    } 
+
+}
+echo '</body>'; 
+echo '<footer>'; 
+echo '<center>'.$app['app_title'].' , &#169;'.$app['app_copy_year'].' <a href="'.$app['app_copy_url'].'">'.$app['app_copy_text'].'</a></center>'; 
+echo '</footer>'; 
+echo '</html>'; 
+?>

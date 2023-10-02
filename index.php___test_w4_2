@@ -1,0 +1,32 @@
+<?php
+ini_set('display_errors', 1); ini_set('display_startup_errors', 1); error_reporting(E_ALL);
+
+
+
+
+echo '<html>';
+echo '<body>';
+require_once 'appcon.php'; 
+require_once 'funcs.php'; 
+require_once 'medoo.php'; 
+require_once 'db.php'; 
+
+if (isset($_SESSION['test_idx'])) 
+{
+    $_SESSION['test_idx'] = $_SESSION['test_idx'] + 1;
+}
+else
+{
+    $_SESSION['test_idx'] = 1;
+}
+
+echo '<form action="index.php?e=tools" method="post">';
+echo 'Name from session '.$_SESSION['test_idx'].': <input type="text" name="name"><br>';
+echo 'E-mail: <input type="text" name="email"><br>';
+echo '<input type="submit">';
+echo '</form>';
+
+echo '</body>';
+echo '</html>';
+
+?>
